@@ -22,8 +22,10 @@ android {
     defaultConfig {
         consumerProguardFile("proguard.cfg")
     }
+    namespace = "org.acra"
 }
 
 dependencies {
-    api(projects.acraJavacore)
+    api(libs.androidx.annotation)
+    androidTestImplementation(libs.bundles.androidx.test)
 }

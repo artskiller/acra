@@ -20,8 +20,9 @@ plugins {
 
 android {
     defaultConfig {
-        minSdkVersion(22)
+        minSdk = 22
     }
+    namespace = "org.acra.scheduler"
 }
 
 dependencies {

@@ -3,19 +3,16 @@
 |---|---|
 |Build|[ ![test](https://github.com/ACRA/acra/workflows/test/badge.svg?branch=master) ](https://github.com/ACRA/acra/actions?query=workflow%3Atest)|
 |Maven Central|[![Maven Central](https://img.shields.io/maven-central/v/ch.acra/acra-core.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22ch.acra%22)|
-|Android Versions|![minVersion](https://img.shields.io/badge/dynamic/json?label=Android%20Min%20Version&query=version&url=https%3A%2F%2Ffaendir.com%2Fandroid%2Facra.php%3Fversion%3Dandroid-min) ![targetVersion](https://img.shields.io/badge/dynamic/json?label=Android%20Target%20Version&query=version&url=https%3A%2F%2Ffaendir.com%2Fandroid%2Facra.php%3Fversion%3Dandroid-target)|
+|Android Versions|![minVersion](https://img.shields.io/badge/dynamic/json?label=Android%20Min%20Version&query=version&url=https%3A%2F%2Fwww.acra.ch%2Fandroid-min.json) ![targetVersion](https://img.shields.io/badge/dynamic/json?label=Android%20Target%20Version&query=version&url=https%3A%2F%2Fwww.acra.ch%2Fandroid-target.json)|
 |License|![license](https://img.shields.io/github/license/ACRA/acra.svg)|
 | Statistics|[![AppBrain stats](https://www.appbrain.com/stats/libraries/shield/acra.svg)](https://www.appbrain.com/stats/libraries/details/acra/acra)|
-|Donations|[![Flattr this project](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=kevingaudin&url=http://acra.ch&title=ACRA%20-%20Application%20Crash%20Reports%20for%20Android&language=&tags=opensource%2Candroid&category=software&description=ACRA%20%28Application%20Crash%20Reports%20for%20Android%29%20is%20an%20open%20source%20android%20library%20for%20developers%2C%20enabling%20their%20apps%20to%20send%20detailed%20reports%20when%20they%20crash.)|
 
 What is ACRA ?
 ==============
 
-ACRA is a library enabling Android applications to automatically post their crash reports to a report server. It is targeted to android applications developers to help them get data from their applications when they crash or behave erroneously.
+ACRA is an open-source library for Android developers to easily integrate crash reporting into their applications. It provides a comprehensive set of features, including customizable reporting, support for multiple different senders, and flexible data collection options, enabling developers to quickly identify and diagnose issues in their apps.
 
 ACRA is used in 1.57% ([See AppBrain/stats](https://www.appbrain.com/stats/libraries/details/acra/acra)) of all apps on Google Play as of June 2020. That's over **13 thousand apps** and over **5 billion downloads** including ACRA.
-
-See [Setup](https://www.acra.ch/docs/Setup) for a step-by-step installation and usage guide.
 
 A crash reporting feature for android apps is native since Android 2.2 (FroYo) but only available through the official Android Market (and with limited data). ACRA is a great help for Android developers:
 
@@ -34,6 +31,10 @@ The user is notified of an error only once, and you might enhance the perceived 
 
 Please do not hesitate to open defects/enhancements requests in [the issue tracker](https://github.com/ACRA/acra/issues).
 
+How to use
+=====
+Our [Website](https://www.acra.ch/docs/Setup) covers a step-by-step guide for initial setup as well as advanced usage information.
+
 Latest version
 ===========================================
 
@@ -44,8 +45,8 @@ For migrating from 4.x, please see our [Migration guide](https://github.com/ACRA
 Backends
 ========
 
-[Acrarium](https://github.com/F43nd1r/Acrarium) is the official backend for report storage and analysis. Acrarium is in active development and has recently reached stable release.
+[Acrarium](https://github.com/F43nd1r/Acrarium) is the official backend for report storage and analysis. Acrarium is still in active development.
 
 [Acralyzer](https://github.com/ACRA/acralyzer) was the official backend before that. It runs on CouchDB, for which free hosting solutions exist. It is feature complete, but currently unmaintained. Anybody picking this project up is very welcome.
 
-[A lot of other solutions](https://github.com/ACRA/acra/wiki/Backends) have been provided by the community, just check which one you like most.
+[A lot of other solutions](https://www.acra.ch/docs/Backends) have been provided by the community, just check which one you like most.

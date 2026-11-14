@@ -12,28 +12,43 @@ jobs:
 
     steps:
       - name: Setup Java
-        uses: actions/setup-java@v2.3.1
+        uses: actions/setup-java@v6.2.0
         with:
-          distribution: 'adopt'
-          java-version: '11'
+          distribution: 'temurin'
+          java-version: '17.0.21+9'
       - name: Checkout acra
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7.0.1
         with:
           ref: ${{ github.ref }}
       - name: Generate Javadoc
-        run: ./gradlew assembleRelease dokkaHtmlCollector --no-daemon
+        run: ./gradlew assembleRelease dokkaGenerate --no-daemon
       - name: Extract version
         id: version
         run: echo "::set-output name=value::$(git describe --abbrev=0 | sed -e "s/^acra-//")"
+      - name: Checkout master
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: master
+          clean: false
       - name: Update Javadoc
         run: |
-          mkdir ./web/static/javadoc/${{ steps.version.outputs.value }}
-          cp -a ./build/dokka/htmlCollector/. ./web/static/javadoc/${{ steps.version.outputs.value }}/
-          ln -sfn "${{ steps.version.outputs.value }}/" ./web/static/javadoc/latest
+          export VERSION=${{ steps.version.outputs.value }}
+          diff -qr ./build/dokka/html/ ./web/static/javadoc/latest/ \
+            && ln -sfn "$(readlink ./web/static/javadoc/latest)" ./web/static/javadoc/$VERSION \
+            || (mkdir ./web/static/javadoc/$VERSION && cp -a ./build/dokka/html/. ./web/static/javadoc/$VERSION/)
+          ln -sfn "$VERSION/" ./web/static/javadoc/latest
+      - name: Update Android version badge data
+        run: |
+          android_min=$(sed -nE 's/^android-min[[:space:]]*=[[:space:]]*"([^"]+)".*$/\1/p' gradle/libs.versions.toml)
+          android_target=$(sed -nE 's/^android-target[[:space:]]*=[[:space:]]*"([^"]+)".*$/\1/p' gradle/libs.versions.toml)
+          test -n "$android_min"
+          test -n "$android_target"
+          printf '{"version":"%s"}\n' "$android_min" > web/static/android-min.json
+          printf '{"version":"%s"}\n' "$android_target" > web/static/android-target.json
       - name: Commit and push changes
-        uses: EndBug/add-and-commit@v7
+        uses: EndBug/add-and-commit@v11.1.1
         with:
-          add: 'web/static/javadoc'
+          add: 'web/static/javadoc web/static/android-min.json web/static/android-target.json'
           message: "Add javadoc for version ${{ steps.version.outputs.value }}"
           github_token: ${{ secrets.PUSH_TOKEN }}
           branch: 'master'

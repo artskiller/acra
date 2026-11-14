@@ -55,12 +55,12 @@ httpSender {
     //defaults to false. Recommended if your backend supports it
     compress = false
     //defaults to all
-    tlsProtocols = arrayOf(TLS.V1_3, TLS.V1_2, TLS.V1_1, TLS.V1)
+    tlsProtocols = listOf(TLS.V1_3, TLS.V1_2, TLS.V1_1, TLS.V1)
 }
 ```
 
 ```java
-getPluginConfigurationBuilder(HttpSenderConfigurationBuilder.class)
+new HttpSenderConfigurationBuilder()
     //required. Https recommended
     .withUri("https://your.server.com/report")
     //optional. Enables http basic auth
@@ -83,7 +83,8 @@ getPluginConfigurationBuilder(HttpSenderConfigurationBuilder.class)
     //defaults to false. Recommended if your backend supports it
     .withCompress(false)
     //defaults to all
-    .withTlsProtocols(arrayOf(TLS.V1_3, TLS.V1_2, TLS.V1_1, TLS.V1))
+    .withTlsProtocols(Arrays.asList(TLS.V1_3, TLS.V1_2, TLS.V1_1, TLS.V1))
+    .build()
 ```
 
 </AndroidCode>
@@ -119,7 +120,7 @@ mailSender {
 ```
 
 ```java
-getPluginConfigurationBuilder(MailSenderConfigurationBuilder.class)
+new MailSenderConfigurationBuilder()
     //required
     .withMailTo("acra@yourserver.com")
     //defaults to true
@@ -130,6 +131,7 @@ getPluginConfigurationBuilder(MailSenderConfigurationBuilder.class)
     .withSubject(getString(R.string.mail_subject))
     //defaults to empty
     .withBody(getString(R.string.mail_body))
+    .build()
 ```
 
 </AndroidCode>
@@ -141,6 +143,12 @@ Emails are sent with an `ACTION_SEND_MULTIPLE` intent. This means that the follo
 ## Implementing your own sender
 
 You can implement your own `ReportSender` and configure ACRA to use that instead of or in addition to other senders.
+
+:::tip
+
+Throwing a `ReportSenderException` from `YourCustomSender.send()` notifies ACRA of a failed delivery, and might trigger a retry (see [RetryPolicy](https://www.acra.ch/javadoc/latest/acra/org.acra.config/-core-configuration/retry-policy-class.html)).
+
+:::
 
 <AndroidCode>
 

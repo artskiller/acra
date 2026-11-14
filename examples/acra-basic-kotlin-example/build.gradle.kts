@@ -15,35 +15,36 @@
  */
 plugins {
     id("com.android.application")
-    kotlin("android")
-    kotlin("kapt")
+    id("com.google.devtools.ksp")
 }
 
 android {
-    compileSdkVersion(30)
+    namespace = "org.acra.example"
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "org.acra.example"
-        minSdkVersion(16)
-        targetSdkVersion(30)
+        minSdk = 16
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+    buildFeatures {
+        buildConfig = true
     }
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
-    val acraVersion = "5.8.2"
+    val acraVersion = "5.14.2"
     implementation("ch.acra:acra-http:$acraVersion")
 
-    kapt("com.google.auto.service:auto-service:1.0")
-    compileOnly("com.google.auto.service:auto-service-annotations:1.0")
+    ksp("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
+    compileOnly("com.google.auto.service:auto-service-annotations:1.1.1")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.8"
+    compilerOptions {
         freeCompilerArgs = listOf("-Xjvm-default=all")
     }
 }

@@ -18,8 +18,10 @@ package org.acra.sender
 import android.content.Context
 import android.os.Bundle
 import org.acra.annotation.OpenAPI
+import org.acra.config.CoreConfiguration
 import org.acra.data.CrashReportData
-import org.acra.sender.ReportSenderException
+import org.acra.log.debug
+import org.acra.plugins.loadEnabled
 
 /**
  * A simple interface for defining various crash report senders.
@@ -38,7 +40,6 @@ interface ReportSender {
      * @param errorContent Stores key/value pairs for each report field.
      * @throws ReportSenderException If anything goes fatally wrong during the handling of crash data, you can (should) throw a [ReportSenderException] with a custom message.
      */
-    @JvmDefault
     @Throws(ReportSenderException::class)
     fun send(context: Context, errorContent: CrashReportData) {
     }
@@ -54,12 +55,23 @@ interface ReportSender {
      * @param extras       additional information set in a [org.acra.scheduler.DefaultSenderScheduler]
      * @throws ReportSenderException If anything goes fatally wrong during the handling of crash data, you can (should) throw a [ReportSenderException] with a custom message.
      */
-    @JvmDefault
     @Throws(ReportSenderException::class)
     fun send(context: Context, errorContent: CrashReportData, extras: Bundle) = send(context, errorContent)
 
-    @JvmDefault
     fun requiresForeground(): Boolean {
         return false
+    }
+
+    companion object {
+        fun loadSenders(context: Context, config: CoreConfiguration): List<ReportSender> {
+            debug { "Using PluginLoader to find ReportSender factories" }
+            val factories: List<ReportSenderFactory> = config.pluginLoader.loadEnabled(config)
+            debug { "reportSenderFactories : $factories" }
+            return factories.map { it.create(context, config).also { debug { "Adding reportSender : $it" } } }
+        }
+
+        fun hasForegroundSenders(context: Context, config: CoreConfiguration) = loadSenders(context, config).any { it.requiresForeground() }
+
+        fun hasBackgroundSenders(context: Context, config: CoreConfiguration) = loadSenders(context, config).any { !it.requiresForeground() }
     }
 }

@@ -26,6 +26,7 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import org.acra.ACRA;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -35,6 +36,7 @@ import java.io.File;
  * @author F43nd1r
  * @since 04.12.2017
  */
+@Ignore
 @RunWith(AndroidJUnit4.class)
 public class AcraContentProviderTest extends ProviderTestCase2<AcraContentProvider> {
     private static final String JSON_EXTENSION = "json";

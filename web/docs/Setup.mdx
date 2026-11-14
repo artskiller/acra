@@ -11,29 +11,7 @@ This Tutorial will show you how to set up ACRA and guide you through your initia
 
 This guide assumes you are using `com.android.tools.build:gradle:4.0.0` or later.
 
-Acra requires java 8 (native, not RetroLambda or similar):
-
-<GradleCode>
-
-```kotlin title="build.gradle.kts"
-android {
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-}
-```
-
-```groovy title="build.gradle"
-android {
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-}
-```
-
-</GradleCode>
+Acra requires at least java 11. This can be configured in various ways, our examples use toolchains for [Java](https://github.com/ACRA/acra/blob/master/examples/acra-basic-java-example/build.gradle.kts#L33) and [Kotlin](https://github.com/ACRA/acra/blob/master/examples/acra-basic-kotlin-example/build.gradle.kts#L35).
 
 ## Dependencies
 
@@ -162,7 +140,7 @@ implementation "ch.acra:acra-toast:$acraVersion"
 
 Add nothing.
 
-More info: [Interactions](interactions)
+More info: [Interactions](Interactions)
 
 ### Optional Plugins
 * **Limiter:** 
@@ -235,17 +213,17 @@ public class MyApplication extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
 
-        CoreConfigurationBuilder builder = new CoreConfigurationBuilder(this);
-        //core configuration:
-        builder
-            .withBuildConfigClass(BuildConfig.class)
-            .withReportFormat(StringFormat.JSON);
-        //each plugin you chose above can be configured with its builder like this:
-        builder.getPluginConfigurationBuilder(ToastConfigurationBuilder.class)
-            .withResText(R.string.acra_toast_text)
-            //make sure to enable all plugins you want to use:
-            .withEnabled(true);
-        ACRA.init(this, builder);
+        ACRA.init(this, new CoreConfigurationBuilder()
+                //core configuration:
+                .withBuildConfigClass(BuildConfig.class)
+                .withReportFormat(StringFormat.JSON)
+                .withPluginConfigurations(
+                    //each plugin you chose above can be configured with its builder like this:
+                    new ToastConfigurationBuilder()
+                        .withText(getString(R.string.acra_toast_text))
+                        .build()
+                )
+            );
     }
 }
 ```
@@ -255,13 +233,13 @@ public class MyApplication extends Application {
 
 **Full configuration options documentation:**
 
-* [`Core`](pathname:///javadoc/latest/acra/org.acra.config/-core-configuration-builder)
-* [`HttpSender`](pathname:///javadoc/latest/acra/org.acra.config/-http-sender-configuration-builder)
-* [`MailSender`](pathname:///javadoc/latest/acra/org.acra.config/-mail-sender-configuration-builder)
-* [`Dialog`](pathname:///javadoc/latest/acra/org.acra.config/-dialog-configuration-builder)
-* [`Notification`](pathname:///javadoc/latest/acra/org.acra.config/-notification-configuration-builder)
-* [`Toast`](pathname:///javadoc/latest/acra/org.acra.config/-toast-configuration-builder)
-* [`Limiter`](pathname:///javadoc/latest/acra/org.acra.config/-limiter-configuration-builder)
-* [`Scheduler`](pathname:///javadoc/latest/acra/org.acra.config/-scheduler-configuration-builder)
+* [`Core`](pathname:///javadoc/latest/acra/org.acra.config/-core-configuration)
+* [`HttpSender`](pathname:///javadoc/latest/acra/org.acra.config/-http-sender-configuration)
+* [`MailSender`](pathname:///javadoc/latest/acra/org.acra.config/-mail-sender-configuration)
+* [`Dialog`](pathname:///javadoc/latest/acra/org.acra.config/-dialog-configuration)
+* [`Notification`](pathname:///javadoc/latest/acra/org.acra.config/-notification-configuration)
+* [`Toast`](pathname:///javadoc/latest/acra/org.acra.config/-toast-configuration)
+* [`Limiter`](pathname:///javadoc/latest/acra/org.acra.config/-limiter-configuration)
+* [`Scheduler`](pathname:///javadoc/latest/acra/org.acra.config/-scheduler-configuration)
 
 See also: [Interactions](Interactions), [Senders](Senders)

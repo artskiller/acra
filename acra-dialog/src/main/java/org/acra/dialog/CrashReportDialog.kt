@@ -23,6 +23,7 @@ import android.text.InputType
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
@@ -30,8 +31,9 @@ import android.widget.TextView
 import androidx.annotation.CallSuper
 import org.acra.ACRA
 import org.acra.ACRAConstants
-import org.acra.config.ConfigUtils.getPluginConfiguration
+import org.acra.annotation.OpenAPI
 import org.acra.config.DialogConfiguration
+import org.acra.config.getPluginConfiguration
 import org.acra.prefs.SharedPreferencesFactory
 
 /**
@@ -40,8 +42,9 @@ import org.acra.prefs.SharedPreferencesFactory
  *
  * @author F43nd1r &amp; Various
  */
+@OpenAPI
 @Suppress("MemberVisibilityCanBePrivate")
-open class CrashReportDialog : Activity(), DialogInterface.OnClickListener {
+class CrashReportDialog : Activity(), DialogInterface.OnClickListener {
     private lateinit var scrollable: LinearLayout
     private var userCommentView: EditText? = null
     private var userEmailView: EditText? = null
@@ -54,7 +57,6 @@ open class CrashReportDialog : Activity(), DialogInterface.OnClickListener {
      * @return the AlertDialog displayed by this Activity
      */
     protected lateinit var dialog: AlertDialog
-        private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,8 +65,8 @@ open class CrashReportDialog : Activity(), DialogInterface.OnClickListener {
             scrollable = LinearLayout(this)
             scrollable.orientation = LinearLayout.VERTICAL
             sharedPreferencesFactory = SharedPreferencesFactory(applicationContext, helper.config)
-            dialogConfiguration = getPluginConfiguration(helper.config, DialogConfiguration::class.java)
-            dialogConfiguration.resTheme.takeIf { it != ACRAConstants.DEFAULT_RES_VALUE }?.let { setTheme(it) }
+            dialogConfiguration = helper.config.getPluginConfiguration()
+            dialogConfiguration.resTheme?.let { setTheme(it) }
             padding = loadPaddingFromTheme()
             buildAndShowDialog(savedInstanceState)
         } catch (e: IllegalArgumentException) {
@@ -79,11 +81,11 @@ open class CrashReportDialog : Activity(), DialogInterface.OnClickListener {
      */
     protected fun buildAndShowDialog(savedInstanceState: Bundle?) {
         val dialogBuilder = AlertDialog.Builder(this)
-        dialogConfiguration.title.takeIf { it.isNotEmpty() }?.let { dialogBuilder.setTitle(title) }
-        dialogConfiguration.resIcon.takeIf { it != ACRAConstants.DEFAULT_RES_VALUE }?.let { dialogBuilder.setIcon(it) }
+        dialogConfiguration.title?.takeIf { it.isNotEmpty() }?.let { dialogBuilder.setTitle(it) }
+        dialogConfiguration.resIcon?.let { dialogBuilder.setIcon(it) }
         dialogBuilder.setView(buildCustomView(savedInstanceState))
-                .setPositiveButton(dialogConfiguration.positiveButtonText, this)
-                .setNegativeButton(dialogConfiguration.negativeButtonText, this)
+                .setPositiveButton(dialogConfiguration.positiveButtonText ?: getString(android.R.string.ok), this)
+                .setNegativeButton(dialogConfiguration.negativeButtonText ?: getString(android.R.string.cancel), this)
         dialog = dialogBuilder.create()
         dialog.setCanceledOnTouchOutside(false)
         dialog.setOnDismissListener {
@@ -142,7 +144,7 @@ open class CrashReportDialog : Activity(), DialogInterface.OnClickListener {
      * @return the main view
      */
     protected fun getMainView(): View {
-        return TextView(this).apply { dialogConfiguration.text.takeIf { it.isNotEmpty() }?.let { text = it } }
+        return TextView(this).apply { dialogConfiguration.text?.takeIf { it.isNotEmpty() }?.let { text = it } }
     }
 
     /**
@@ -151,7 +153,7 @@ open class CrashReportDialog : Activity(), DialogInterface.OnClickListener {
      * @return the label or null if there is no resource
      */
     protected fun getCommentLabel(): View? {
-        return dialogConfiguration.commentPrompt.takeIf { it.isNotEmpty() }?.let { TextView(this).apply { text = it } }
+        return dialogConfiguration.commentPrompt?.takeIf { it.isNotEmpty() }?.let { TextView(this).apply { text = it } }
     }
 
     /**
@@ -173,7 +175,7 @@ open class CrashReportDialog : Activity(), DialogInterface.OnClickListener {
      * @return the label or null if there is no resource
      */
     protected fun getEmailLabel(): View? {
-        return dialogConfiguration.emailPrompt.takeIf { it.isNotEmpty() }?.let { TextView(this).apply { text = it } }
+        return dialogConfiguration.emailPrompt?.takeIf { it.isNotEmpty() }?.let { TextView(this).apply { text = it } }
     }
 
     /**

@@ -18,6 +18,13 @@ plugins {
     `acra-publish`
 }
 
+android {
+    defaultConfig {
+        minSdk = 21
+    }
+    namespace = "org.acra.notification"
+}
+
 dependencies {
     api(projects.acraCore)
     implementation(libs.androidx.core)

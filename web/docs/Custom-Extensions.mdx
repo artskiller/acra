@@ -15,7 +15,7 @@ Example:
 <AndroidCode>
 
 ```kotlin
-MyAdmin : ReportingAdministrator {
+class MyAdmin : ReportingAdministrator {
     init {
         Log.d("MyAdmin", "MyAdmin was loaded")
     }
@@ -50,19 +50,25 @@ Add the following dependencies:
 <GradleCode>
 
 ```kotlin title="build.gradle.kts"
-compileOnly("com.google.auto.service:auto-service-annotations:1.0")
+compileOnly("com.google.auto.service:auto-service-annotations:1.1.1")
 //either for java sources:
-annotationProcessor("com.google.auto.service:auto-service:1.0")
+annotationProcessor("com.google.auto.service:auto-service:1.1.1")
 //or for kotlin sources (requires kapt gradle plugin):
-kapt("com.google.auto.service:auto-service:1.0")
+kapt("com.google.auto.service:auto-service:1.1.1")
+//or for ksp(requires ksp gradle plugin):
+ksp("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
+ksp("com.google.auto.service:auto-service:1.1.1")
 ```
 
 ```groovy title="build.gradle"
-compileOnly "com.google.auto.service:auto-service-annotations:1.0"
+compileOnly "com.google.auto.service:auto-service-annotations:1.1.1"
 //either for java sources:
-annotationProcessor "com.google.auto.service:auto-service:1.0"
+annotationProcessor "com.google.auto.service:auto-service:1.1.1"
 //or for kotlin sources (requires kapt gradle plugin):
-kapt "com.google.auto.service:auto-service:1.0"
+kapt "com.google.auto.service:auto-service:1.1.1"
+//or for ksp(requires ksp gradle plugin):
+ksp "dev.zacsweers.autoservice:auto-service-ksp:1.1.0"
+ksp "com.google.auto.service:auto-service:1.1.1"
 ```
 
 </GradleCode>
@@ -82,4 +88,13 @@ Then annotate your extension with the following:
 </AndroidCode>
 
 ### By file
-See [ServiceLoader](https://developer.android.com/reference/java/util/ServiceLoader.html) for manual service registration
+
+To manually register your extension, create a text file in `src/main/resources/META-INF/services/` named after the fully qualified interface name (e.g., `org.acra.sender.ReportSenderFactory`) containing the fully qualified name of your implementation class:
+
+```
+com.example.myapp.MySenderFactory
+```
+
+Your implementation must be `public` and have a public zero-argument constructor.
+
+See [ServiceLoader](https://developer.android.com/reference/java/util/ServiceLoader.html) for more details.

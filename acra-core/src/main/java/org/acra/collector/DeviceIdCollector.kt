@@ -18,6 +18,7 @@ package org.acra.collector
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import androidx.annotation.RequiresPermission
 import com.google.auto.service.AutoService
 import org.acra.ACRA
@@ -35,6 +36,7 @@ import org.acra.util.SystemServices.getTelephonyManager
  * @author F43nd1r
  * @since 4.9.1
  */
+@Suppress("DEPRECATION")
 @AutoService(Collector::class)
 class DeviceIdCollector : BaseReportFieldCollector(ReportField.DEVICE_ID) {
     override fun shouldCollect(context: Context, config: CoreConfiguration, collect: ReportField, reportBuilder: ReportBuilder): Boolean {
@@ -46,7 +48,7 @@ class DeviceIdCollector : BaseReportFieldCollector(ReportField.DEVICE_ID) {
     @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
     @Throws(Exception::class)
     override fun collect(reportField: ReportField, context: Context, config: CoreConfiguration, reportBuilder: ReportBuilder, target: CrashReportData) {
-        @Suppress("DEPRECATION")
-        target.put(ReportField.DEVICE_ID, getTelephonyManager(context).deviceId)
+        val deviceId = if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) getTelephonyManager(context).deviceId else null
+        target.put(ReportField.DEVICE_ID, deviceId)
     }
 }

@@ -36,10 +36,9 @@ dependencies {
     implementation(libs.dokka.core)
     implementation(libs.jgitver)
     implementation(libs.nexusPublish)
+    implementation(libs.ksp.gradle)
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+kotlin {
+    jvmToolchain(17)
 }

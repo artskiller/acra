@@ -43,16 +43,6 @@ object ACRAConstants {
      */
     const val MAX_SEND_REPORTS = 5
 
-    /**
-     * A special String value to allow the usage of a pseudo-null default value
-     * in annotation parameters.
-     */
-    const val NULL_VALUE = "ACRA-NULL-STRING"
-
-    const val DEFAULT_RES_VALUE = 0
-
-    const val DEFAULT_STRING_VALUE = ""
-
     const val DEFAULT_LOG_LINES = 100
 
     const val DEFAULT_BUFFER_SIZE_IN_BYTES = 8192
@@ -60,10 +50,10 @@ object ACRAConstants {
     /**
      * Default list of [ReportField]s to be sent in reports. You can set
      * your own list with
-     * [org.acra.annotation.AcraCore.reportContent].
+     * [org.acra.config.CoreConfiguration.reportContent].
      */
     @JvmField
-    val DEFAULT_REPORT_FIELDS = arrayOf(ReportField.REPORT_ID, ReportField.APP_VERSION_CODE, ReportField.APP_VERSION_NAME, ReportField.PACKAGE_NAME, ReportField.FILE_PATH,
+    val DEFAULT_REPORT_FIELDS = listOf(ReportField.REPORT_ID, ReportField.APP_VERSION_CODE, ReportField.APP_VERSION_NAME, ReportField.PACKAGE_NAME, ReportField.FILE_PATH,
             ReportField.PHONE_MODEL, ReportField.BRAND, ReportField.PRODUCT, ReportField.ANDROID_VERSION, ReportField.BUILD, ReportField.TOTAL_MEM_SIZE,
             ReportField.AVAILABLE_MEM_SIZE, ReportField.BUILD_CONFIG, ReportField.CUSTOM_DATA, ReportField.IS_SILENT, ReportField.STACK_TRACE, ReportField.INITIAL_CONFIGURATION,
             ReportField.CRASH_CONFIGURATION, ReportField.DISPLAY, ReportField.USER_COMMENT, ReportField.USER_EMAIL, ReportField.USER_APP_START_DATE, ReportField.USER_CRASH_DATE,

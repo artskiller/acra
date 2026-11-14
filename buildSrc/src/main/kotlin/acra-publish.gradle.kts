@@ -13,46 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.android.build.gradle.LibraryExtension
-import org.jetbrains.dokka.gradle.DokkaTask
 
 
 plugins {
     `maven-publish`
     signing
-    id("org.jetbrains.dokka")
+    org.jetbrains.dokka
 }
 
-tasks.withType<DokkaTask> {
+dokka {
     dokkaSourceSets.configureEach {
-        suppressGeneratedFiles.set(false)
+        suppressGeneratedFiles = false
     }
-}
-
-tasks.register<Jar>("javadocJar") {
-    group = "documentation"
-    from(tasks["dokkaJavadoc"])
-    archiveClassifier.set("javadoc")
 }
 
 afterEvaluate {
-    tasks.register<Jar>("sourcesJar") {
-        group = "documentation"
-        from(
-            project.extensions.findByType<LibraryExtension>()?.sourceSets?.get("main")?.java?.srcDirs
-                ?: project.extensions.getByType<SourceSetContainer>()["main"].allSource
-        )
-        archiveClassifier.set("sources")
-    }
-
     publishing {
         publications {
             create<MavenPublication>("maven") {
-                from(components.findByName("release") ?: components.findByName("java"))
-
-                tasks.findByName("sourcesJar")?.let { artifact(it) }
-                tasks.findByName("javadocJar")?.let { artifact(it) }
-
+                from(components.findByName("release"))
                 pom {
                     name.set("ACRA")
                     description.set("Publishes reports of Android application crashes to an end point.")
@@ -88,17 +67,6 @@ afterEvaluate {
         }
         repositories {
             mavenLocal()
-            repositories {
-                mavenLocal()
-                maven {
-                    name = "GithubPackages"
-                    url = uri("https://maven.pkg.github.com/ACRA/acra")
-                    credentials {
-                        username = project.findProperty("githubUser") as? String ?: System.getenv("GITHUB_USER")
-                        password = project.findProperty("githubPackageKey") as? String ?: System.getenv("GITHUB_TOKEN")
-                    }
-                }
-            }
         }
     }
 

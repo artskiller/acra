@@ -26,6 +26,7 @@ import org.acra.data.CrashReportData
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.lang.reflect.Array
 import java.lang.reflect.InvocationTargetException
 
 /**
@@ -42,7 +43,7 @@ class ReflectionCollector : BaseReportFieldCollector(ReportField.BUILD, ReportFi
         val result = JSONObject()
         when (reportField) {
             ReportField.BUILD -> {
-                collectConstants(Build::class.java, result)
+                collectConstants(Build::class.java, result, exclude = listOf("SERIAL"))
                 val version = JSONObject()
                 collectConstants(Build.VERSION::class.java, version)
                 result.put("VERSION", version)
@@ -86,14 +87,7 @@ class ReflectionCollector : BaseReportFieldCollector(ReportField.BUILD, ReportFi
      */
     @Throws(ClassNotFoundException::class)
     private fun getBuildConfigClass(context: Context, config: CoreConfiguration): Class<*> {
-        val configuredBuildConfig: Class<*> = config.buildConfigClass
-        if (configuredBuildConfig != Any::class.java) {
-            // If set via annotations or programmatically then it will have a real value,
-            // otherwise it will be Object.class (default).
-            return configuredBuildConfig
-        }
-        val className = context.packageName + ".BuildConfig"
-        return Class.forName(className)
+        return config.buildConfigClass ?: Class.forName(context.packageName + ".BuildConfig")
     }
 
     companion object {
@@ -103,15 +97,19 @@ class ReflectionCollector : BaseReportFieldCollector(ReportField.BUILD, ReportFi
          * @param someClass the class to be inspected.
          */
         @Throws(JSONException::class)
-        private fun collectConstants(someClass: Class<*>, container: JSONObject) {
+        private fun collectConstants(someClass: Class<*>, container: JSONObject, exclude: Collection<String> = emptyList()) {
             val fields = someClass.fields
             for (field in fields) {
+                if(field.name in exclude) continue
                 try {
                     val value = field[null]
                     if (value != null) {
                         if (field.type.isArray) {
-                            @Suppress("UNCHECKED_CAST")
-                            container.put(field.name, JSONArray(listOf(*value as Array<Any?>)))
+                            val array = JSONArray()
+                            for (index in 0 until Array.getLength(value)) {
+                                array.put(Array.get(value, index))
+                            }
+                            container.put(field.name, array)
                         } else {
                             container.put(field.name, value)
                         }
